@@ -8,6 +8,9 @@
 (define-constant ERR_INVALID_SIGNATURE (err u1))
 (define-constant ERR_STREAM_STILL_ACTIVE (err u2))
 (define-constant ERR_INVALID_STREAM_ID (err u3))
+;; new error for validating timeframe and amount
+(define-constant ERR_INVALID_AMOUNT (err u4))
+(define-constant ERR_INVALID_TIMEFRAME (err u5))
 
 ;; data vars
 (define-data-var latest-stream-id uint u0)
@@ -50,6 +53,15 @@
             })
             (current-stream-id (var-get latest-stream-id))
         )
+        ;; checks whether the stop-block is greater than start-block
+        (asserts!
+            (> (get stop-block (get timeframe stream))
+                (get start-block (get timeframe stream))
+            )
+            ERR_INVALID_TIMEFRAME
+        )
+        ;; checks for ensuring initial-balance is greater than 0
+        (asserts! (> initial-balance u0) ERR_INVALID_AMOUNT)
         ;; stx-transfer takes in (amount, sender, recipient) arguments
         ;; for the `recipient` - we do `(as-contract tx-sender)`
         ;; so doing `as-contract tx-sender` gives us the contract address itself
@@ -69,7 +81,8 @@
     )
     (let ((stream (unwrap! (map-get? streams stream-id) ERR_INVALID_STREAM_ID)))
         (asserts! (is-eq contract-caller (get sender stream)) ERR_UNAUTHORIZED)
-
+        ;; amount should be greater than 0
+        (asserts! (> amount u0) ERR_INVALID_AMOUNT)
         (try! (stx-transfer? amount contract-caller (as-contract tx-sender)))
         (map-set streams stream-id
             (merge stream { balance: (+ (get balance stream) amount) })
