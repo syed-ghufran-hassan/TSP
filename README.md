@@ -204,26 +204,3 @@ stacks-token-streaming/
 ├── Clarinet.toml           # Clarinet configuration
 └── package.json            # Node dependencies
 ```
-
-## Use Cases
-
-- **Payroll**: Stream salaries to employees block-by-block
-- **Subscriptions**: Continuous payment for services
-- **Vesting**: Token vesting schedules over time
-- **Grants**: Milestone-based funding with streaming
-- **Rentals**: Per-block rental payments
-
-## License
-
-ISC
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Security Considerations
-
-- Always verify signatures before updating stream parameters
-- Ensure proper authorization checks in all functions
-- Test thoroughly on testnet before mainnet deployment
-- Be aware of block height timing for stream calculations
